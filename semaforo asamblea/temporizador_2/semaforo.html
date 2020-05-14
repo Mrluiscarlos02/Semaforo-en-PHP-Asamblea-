@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="css/estilosunB.css">
+	<title>Semaforo</title>
+	<script type="text/javascript" src="js/jquery-1.11.3.min.js"> </script>
+
+
+	<script>
+		// contador de tiempo total en segundos;
+		var tiempo;
+		// timer parpadeo al final
+		var timerblink_id;
+		// timer contador
+		var main_timer;
+		// Registra si está en funcionamiento
+		var running;
+		// Registra si se está en pausa
+		var pause;
+		function sec2time(sec){
+			// retorna diccionario con h, m, s  
+			var s = sec % 60;
+			var m = Math.floor(sec / 60) % 60;
+			var h = Math.floor(sec / 3600);
+			if ((sec < 0) ||  (h >= 100)){
+				window.alert("Error!!!");
+				return null;
+			}
+			return {"s": s, "m": m, "h": h};
+		}
+		function time2sec(h,m,s){
+			return 3600*h+60*m+s;
+		}
+		function time2string(t_dict){   
+			var s = "0",m = "0", h = "0";
+			s = (t_dict["s"] < 10) ? s+t_dict["s"] : t_dict["s"];
+			m = (t_dict["m"] < 10) ? m+t_dict["m"] : t_dict["m"];
+			h = (t_dict["h"] < 10) ? h+t_dict["h"] : t_dict["h"];
+			return h + " " + m + " " + s;
+		}
+		function initStyle(){
+			// Constantes de estilo
+			var font_size = 24; 
+			var font_color = "#000000";
+			$(".clock").css({"font-size":font_size+"vw","color":font_color});
+		}
+		var dotblink_state = 0;
+
+		function startTimer(){
+			// Registrar funcionamiento
+			running = true;
+			// arreglín
+			if (!pause)
+				countDown();
+			// Desactivar botones + y -
+			$(".table_button").prop("disabled",true).css("display","none");
+			// iniciar timer
+			main_timer = window.setInterval(function(){
+				if (dotblink_state==0){
+					// En pausa, parpadear todos los números
+					if (pause)
+						$("#numbers").css("display","none");
+					$("#puntos").css("display","none");
+				}
+				else{
+					// En pausa, parpadear todos los números
+					if (pause)
+						$("#numbers").css("display","");
+					$("#puntos").css("display","block");
+					// Descontar al timer sólo si no se está en pausa
+					if (!pause)
+						countDown();
+				}
+				dotblink_state = (dotblink_state + 1) % 2;
+			},500);
+
+		}
+
+		function pauseTimer(){
+			// Si no se ejecutaba, funciona como Start
+			if (!running){
+				startTimer();
+				pause = false;
+
+
+			}
+			// Si ya funcionaba, toggle pause
+			else
+				pause = !pause;
+			// Forzar mostrar los números, por si quedaron ocultos
+			if (!pause) $("#numbers").css("display","");
+
+					var audio = document.getElementById("audio1");
+			var audioo = document.getElementById("audio2");
+			var audioIni= document.getElementById("AuInicial");
+			audioIni.pause();audioo.pause();audio.pause();
+
+		}
+
+		function stopTimer(){
+			// Detener timers
+			window.clearInterval(main_timer);
+			window.clearInterval(timerblink_id);
+			//
+			$("body").css({"display":"block","background-color":"orange"}); 
+			$(".table_button").prop("disabled",false).css("display","");  
+			$("#play_button").prop("disabled",false).css("display","");   
+			$("#numbers").css("display","");
+			running = false;  }
+		
+
+
+		var timerblink_state = 0;
+
+		function alertarFin(){
+			// Ocultar botones no utilizables
+			$(".table_button").prop("disabled",true).css("display","none"); 
+			$("#play_button").prop("disabled",true).css("display","none"); 
+			// Poner de color rojo el fondo
+			$("body").css("background-color","red");           
+			// Detener timer
+			window.clearInterval(main_timer);                                           
+			// mostrar puntos si quedaron ocultos
+			$("#puntos").css("display","block");
+			// Activar parpadeo de todo el contador
+			timerblink_id = window.setInterval(function(){
+				if (timerblink_state == 0)
+					$("body").css("background-color","white");
+				else 
+					$("body").css("background-color","red");
+				timerblink_state = (timerblink_state + 1) % 2;
+			},500);
+		}
+
+
+
+/*..........................................FUNCIONES DE AUDIO..................................................*/
+
+		function alertAmarillo(){
+					$("body").css("background-color","yellow");	
+
+var audio = document.getElementById("audio1");
+			audio.play();
+
+				}	/**/
+
+		function alertRojo(){
+					$("body").css("background-color","red");
+var audioo = document.getElementById("audio2");
+			audioo.play();			
+
+				}	/**/
+
+
+				function alertinicio(){
+					$("body").css("background-color","green");
+	var audioIni= document.getElementById("AuInicial");
+			audioIni.play();
+				}
+/*.............................................FIN.................................................*/
+
+
+		function updateNumbers(){
+			$("#numbers").text(time2string(sec2time(tiempo))); 
+		}
+
+
+/**/
+		function countDown(){     
+     
+			if (tiempo==180){alertinicio();}
+      		if (tiempo == 60){alertAmarillo();}
+      		if (tiempo == 30){alertRojo();}
+
+			tiempo--;
+			if (tiempo <= 0){
+				stopTimer();        
+	
+				alertarFin();       
+				if (tiempo < 0) tiempo = 0; 
+			}
+			updateNumbers();         
+
+		}
+
+		function clickButton(signo,indice){
+			// obtener tiempo de segundos a h:m:s
+			dict_time = sec2time(tiempo);
+			switch (indice){
+				case 0:
+				case 1:
+					dict_time["h"] = dict_time["h"] + (signo == "-" ? -1 : 1)*((indice % 2 == 0) ? 10 : 1);
+					if (dict_time["h"] >= 100) dict_time["h"] = dict_time["h"] % 100;
+					if (dict_time["h"] < 0) dict_time["h"] = (dict_time["h"]+100) % 100;
+					break;
+				case 2:
+				case 3:
+					dict_time["m"] = dict_time["m"] + (signo == "-" ? -1 : 1)*((indice % 2 == 0) ? 10 : 1);
+					if (dict_time["m"] >= 60) dict_time["m"] = dict_time["m"] % 60;
+					if (dict_time["m"] < 0) dict_time["m"] = (dict_time["m"]+60) % 60;
+					break;
+				case 4:
+				case 5:
+					dict_time["s"] = dict_time["s"] + (signo == "-" ? -1 : 1)*((indice % 2 == 0) ? 10 : 1);
+					// if (dict_time["s"]>9 && indice %2 == 0) dict_time["s"]==0;
+					// if (dict_time["s"]>60 && indice %2 != 0) dict_time["s"]==0;
+					// if (dict_time["s"]<0) dict_time["s"]=(indice % 2 == 0 ? ((dict_time["s"]+60)%60) : (dict_time[""]));
+
+					if (dict_time["s"] >= 60) dict_time["s"] = dict_time["s"] % 60;
+					if (dict_time["s"] < 0) dict_time["s"] = (dict_time["s"]+60) % 60;
+					break;
+			}
+			tiempo = time2sec(dict_time["h"],dict_time["m"],dict_time["s"]);
+			updateNumbers();
+		}
+
+		$(document).ready(function(){     
+			initStyle();
+			tiempo = 180;    
+			running = false;
+			pause = false;
+			updateNumbers();
+		});
+
+
+</script>
+
+	<style>
+		@font-face{
+		    font-family: "LCD";
+		    src: url('fonts/digital-7 (mono italic).ttf');
+		}
+		body,html{
+			background-color: #547bfb;
+			margin: 0;
+			overflow: hidden;
+		}
+		#container{
+			text-align: center;
+			width: 100vw;
+			height: 100vh;
+		}
+		.clock{
+		    position: absolute;
+		    top: 50%;
+		    left: 50%;
+		    transform: translate(-50%,-50%);
+		    white-space: nowrap;
+			font-family: "LCD";
+		}
+		#numbers{
+		}
+		#puntos{
+		}
+		.td_space{
+
+			padding-left:14vw;
+		}
+		#table_container{
+			text-align: center;
+			top:100vh;
+			transform: translate(0%,-120%); 
+		}
+		#table_container td{
+		}
+		#table_container table{
+			background-color: #355ee3;
+	
+			opacity: 30px;
+			margin-left:auto;
+			margin-right:auto;
+		}
+		#table_container input{
+			margin-left:4vw;
+			margin-right:4vw;
+		}
+/*		#playstop_container {
+			position: absolute;
+			width: 100vw;
+			text-align: center;
+			top: 5vh;
+		}*/
+
+	</style>
+</head>
+<body>
+
+
+		<audio id="audio1" > 
+				<source  type="audio/mp3" src="sound/amarillo.mp3" > 
+		</audio> 		
+
+		<audio id="audio2" > 
+				<source  type="audio/mp3" src="sound/30sfinal.mp3" > 
+		</audio>
+
+
+
+		<audio id="AuInicial"> 
+				<source  type="audio/mp3" src="sound/inicio.mp3" > 
+		</audio>
+
+<!-- 
+	<div id="playstop_container">
+		<input id="play_button" type="hidden" value="Play/Pause" onclick="pauseTimer()">
+	</div> -->
+
+	<div id="container">
+		<div class="clock" id="numbers"></div>
+		<div class="clock" id="puntos">:&nbsp;&nbsp;:</div>
+		<br>
+	</div>
+
+	<!----> <div id="table_container"  >
+		<table bgcolor="red">
+			<tr>
+				<td><input class="table_button" type="button" value="+" onclick="clickButton('+',0)"></td>
+				<td><input class="table_button" type="button" value="+" onclick="clickButton('+',1)"></td>
+				<td class="td_space"></td>
+				<td><input class="table_button" type="button" value="+" onclick="clickButton('+',2)"></td>
+				<td><input class="table_button" type="button" value="+" onclick="clickButton('+',3)"></td>
+				<td class="td_space"></td>
+				<td><input class="table_button" type="button" value="+" onclick="clickButton('+',4)"></td>
+				<td><input class="table_button" type="button" value="+" onclick="clickButton('+',5)"></td>
+			</tr>
+			<tr>
+				<td><input class="table_button" type="button" value="-" onclick="clickButton('-',0)"></td>
+				<td><input class="table_button" type="button" value="-" onclick="clickButton('-',1)"></td>
+				<td class="td_space"></td>
+				<td><input class="table_button" type="button" value="-" onclick="clickButton('-',2)"></td>
+				<td><input class="table_button" type="button" value="-" onclick="clickButton('-',3)"></td>
+				<td class="td_space"></td>
+				<td><input class="table_button" type="button" value="-" onclick="clickButton('-',4)"></td>
+				<td><input class="table_button" type="button" value="-" onclick="clickButton('-',5)"></td>
+			</tr>
+		</table>
+	</div> 
+
+<!-- .......................  BOTONES MENÚ .............................. -->
+<div onclick="pauseTimer()">
+	<img id="PosNuevoP" src="botones/flecha_reproducir.png"> 
+</div>
+
+<a href="javascript:location.reload()">
+	<div onclick="refrescar()">
+		<img id="PosBotRefres" src="botones/refescar.png"> 
+	</div> 
+</a>
+
+<a href="semaforo2.html"> 2minuto mas
+    <img id="tiempo2" src="botones/2mas.png"> 
+</a>
+
+ <a href="semaforo3.html"> 1minuto mas
+ 	<img id="tiempo3" src="botones/1mas.png"> 
+</a>
+<!-- .......................  FIN  .............................. -->
+
+ </body>
+</html>

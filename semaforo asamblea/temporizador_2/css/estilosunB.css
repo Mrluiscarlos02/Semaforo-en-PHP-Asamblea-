@@ -1,0 +1,117 @@
+
+/*  -----------------------------BOTON PLAY-PAUSE ----------------------------------*/
+#PosNuevoP{  
+background-repeat: no-repeat;
+      position: absolute;
+      width: 100vw;
+ 
+      top: 86vh;
+left:  96%;
+width: 50px; 
+}
+#PosNuevoP:hover{
+background-image: url('../botones/flecha_reproducir(hover).png');
+background-size: 50px;}
+#PosNuevoP:active{
+transform: rotate(15deg);}
+/*--------------------  ------------------------------------------------------------*/
+/*  -----------------------------BOTON REFRESCAR------------------------------------*/
+#PosBotRefres{  
+background-repeat: no-repeat;
+      position: absolute;
+      width: 50vw;
+      top: 93vh;
+left:  96%;
+width: 50px;
+}
+#PosBotRefres:hover{
+background-image: url('../botones/refescar(hover).png');
+background-size: 50px;
+}
+#PosBotRefres:active{
+transform: rotate(-50deg);
+}
+/*--------------------  ------------------------------------------------------------*/
+
+/*  -----------------------------BOTON  2 min TIEMPO EXTRA------------------------------------*/
+#tiempo2{
+background-repeat: no-repeat;
+      position: absolute;
+      width: 50vw;
+      top: 78vh;
+left:  96%;
+width: 50px;
+}
+
+#tiempo2:hover{
+background-image: url('../botones/2mas(hover).png');
+background-size: 50px;
+}
+#tiempo2:active{
+transform: rotate(-50deg);
+}
+
+/*--------------------  ------------------------------------------------------------*/
+/*  -----------------------------BOTON  1 min TIEMPO EXTRA------------------------------------*/
+#tiempo3{
+background-repeat: no-repeat;
+      position: absolute;
+      width: 50vw;
+      top: 70vh;
+left:  96%;
+width: 50px;
+}
+
+#tiempo3:hover{
+background-image: url('../botones/1mas(hover).png');
+background-size: 50px;
+}
+#tiempo3:active{
+transform: rotate(-50deg);
+}
+
+/*--------------------------------------------------------------------------------*/
+
+/*  -----------------------------BOTON  INICIO------------------------------------*/
+
+
+#inicio{
+background-repeat: no-repeat;
+      position: absolute;
+      width: 100vw;
+      top: 78vh;
+left:  96%;
+width: 50px;
+      }
+
+#inicio:hover{
+background-image: url('../botones/inicio(hover).png');
+background-size: 50px;
+}
+#inicio:active{
+transform: rotate(-50deg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
